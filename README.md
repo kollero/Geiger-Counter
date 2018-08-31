@@ -1,4 +1,6 @@
-# Geiger-counter
+# Geiger-counter version 4 C rev
+
+Uses wireless charger so it can be made waterproof.
 
 With 2x sbm-20 tubes, 1.3" Oled display (7pins), Single button on/off control (with led), wireless charging,
 Atmega328p, only exotic component is mcp73871 (lipo charger IC). 

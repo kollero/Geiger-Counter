@@ -36,6 +36,9 @@ double tube2 = 0.172413793104;
 double input_voltage_calc = 0.00647; //(10k/8k)*(5v/1024)=0.00610351
 double battery_voltage_lvl_calc=0.02576; //(124/24)*(5v/1024)=
 
+//sbm-20 recommended running voltage
+double target_voltage=400.0;  //~400v calculated output from resistors
+
 #define LIPO_ARRAY_LENGTH 8
 
 /************************************************************************************************************************************************/
@@ -50,11 +53,9 @@ volatile int32_t    mean_I_err[I_memory],
 					P_err=0,
 					D_err=0;
 
-
 volatile uint32_t	timer_1s=0,		//these are test counters
 					timer_1min=0,
 					timer_1h=0,
-					
 					geiger_pulse1=0,
 					geiger_pulses1=0,
 					geiger_pulse2=0,
@@ -76,37 +77,15 @@ volatile uint16_t	timer_seconds=0,	//these house the real time values from when 
 					volt_value=0,
 					duty_change_counter=0;
 					
-
-uint16_t 			battery_voltage_lvl_ADC=0,
-					broken_counter=0;
-
-uint8_t				now2=0;
-
 volatile bool		first_minute_passed = 0,
 					refresh_display=1,
 					high_voltage_duty_change=0,
 					check_pulses=0,
 					v_inputted=0,
-					charging=0;
+					charging=0,
+					first_min = 0,
+					now=0;
 					
-volatile bool		 first_min = 0,
-now=0;
-		  
-double			actual_cps=0.0,
-				actual_cps2=0.0,
-				HV_vol=0.0,
-				right_voltage=400.0,  //~400v calculated output from resistors remember to change to right value
-				dosage=0.0,
-				dosage_1=0.0,
-				total_dose=0.0,
-				dosage_total=0.0,
-				bat=0.0,
-				charging_voltage=0.0,
-				battery_voltage_lvl= 0.0;	
-
- double 		usv=0.0,
-					usv_1=0.0;
-
 bool				cmd_pulse=0,
 					setnewhv=0,
 					led=0,
@@ -115,18 +94,32 @@ bool				cmd_pulse=0,
 					dos_trig_2=0,
 					dos_trig=0,
 					battery_voltage_check_first_time=1,
-					detected_as_broken=0;
+					detected_as_broken=0;					
+						
+uint16_t 			battery_voltage_lvl_ADC=0,
+					broken_counter=0;
 					
+double				actual_cps=0.0,
+					actual_cps2=0.0,
+					HV_vol=0.0,
+					dosage=0.0,
+					dosage_1=0.0,
+					total_dose=0.0,
+					dosage_total=0.0,
+					bat=0.0,
+					charging_voltage=0.0,
+					battery_voltage_lvl= 0.0,	
+ 					usv=0.0,
+					usv_1=0.0,
+					actual_cps3=0,
+					usv3=0;				
 					
-uint32_t totalinmin[60];
-uint32_t totalinmin2[30];
-double actual_cps3=0,
-usv3=0;
-uint16_t xx=120;
-uint16_t yy=35;
-uint16_t y_start=14;
+uint32_t			totalinmin[60],
+					totalinmin2[30];
+			
+uint16_t xx=120, yy=35, y_start=14;
 
-//temp chars for printing
+//chars arrays for printing
 char battery[10]={0,0,0,0,0,0,0,0,0,0};	
 char secs[10]={0,0,0,0,0,0,0,0,0,0};	
 char mins[10]={0,0,0,0,0,0,0,0,0,0};	
@@ -135,15 +128,13 @@ char usvs[10]={0,0,0,0,0,0,0,0,0,0};
 char HV[10]={0,0,0,0,0,0,0,0,0,0};	
 char DOS[10]={0,0,0,0,0,0,0,0,0,0};	
 char CHAR_VOLT[10]={0,0,0,0,0,0,0,0,0,0};	
-
 char string_battery_ADC[10]={0,0,0,0,0,0,0,0,0,0};	
-	
 char string_bat_percent[10]={0,0,0,0,0,0,0,0,0,0};	
-					
 
 /************************************************************************************************************************************************/
-/* Global Objects                                                       																		*/
+/* Global Objects end                                                       																	*/
 /************************************************************************************************************************************************/
+
 #include "lipo.h"
 #include "functions.cpp"
 #include "pitches.h"
@@ -157,8 +148,7 @@ void u8g_setup(void)
 	// CS: PORTD, Bit 6 --> PN(3,6)
 	// A0: PORTD, Bit 7 --> PN(3,7) //DC!!
 	// RST: PB0,  --> PN(1,0)
-	//    Arguments for u8g_InitHWSPI are: CS, A0, Reset
-	
+	// Arguments for u8g_InitHWSPI are: CS, A0, Reset
 	
 	//u8g_InitHWSPI(&u8g, &u8g_dev_ssd1306_128x64_hw_spi, U8G_PIN_NONE,PN(3,6), PN(1,0));
 	u8g_InitHWSPI(&u8g, &u8g_dev_sh1106_128x64_hw_spi,U8G_PIN_NONE,PN(3,7), PN(1,0));
@@ -179,7 +169,6 @@ void system_setup() {
 	PORTD =(1<<PORTD6);
 	
 	//adc set up
-	
 	//ADMUX adlar=0, mux 0000 HV-feedback, mux 0110 battery voltage feedback, input V adc5 0101
 	ADMUX=(1<<REFS0);
 	ADCSRA=(1<<ADEN)|(1<<ADSC)|(1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0); //with 128 clk division
@@ -201,7 +190,6 @@ void system_setup() {
 	PCICR=(1<<PCIE2)|(1<<PCIE1);
 	PCMSK2=(1<<PCINT17); //PD1
 	//PCMSK1=(1<<PCINT12); //PC4
-	
 	
 	//timer 2 control 8 bit
 	//output is 20MHz/(256*125)=1.6ms tick
@@ -227,12 +215,14 @@ int main(void)
 {
 	//delay_ms(1000);
 	delay_ms(300);
+	//zero arrays
 	for (int i=0;i< I_memory-1;i++){
 		mean_I_err[i]=(int32_t)0.0;
 	}
-	 for (int i = 0; i < 60; i++ ) {
+	for (int i = 0; i < 60; i++ ) {
 		 totalinmin[i] = 0;
-	 }
+	}
+	
 	delay_ms(200);
 	system_setup();
 	u8g_setup();
@@ -299,8 +289,6 @@ int main(void)
 			total_time_in_seconds=timer_seconds+60*timer_minutes+360*timer_hours;
 			dosage=(double)(dosage_total/total_time_in_seconds);
 		
-					
-
 			testing++;
 			if (testing>=5) //once every 5 seconds
 			{
@@ -403,11 +391,9 @@ int main(void)
 		}
 		
     }
-	
 }
 
 ISR(TIMER2_COMPA_vect) { //interrupts every 1.6ms
-	
 	timer_1s++;
 	//zero the timer if 1 second has been reached
 	if(timer_1s >= 625)		//625*1.6ms=1s
@@ -433,14 +419,12 @@ ISR(TIMER2_COMPA_vect) { //interrupts every 1.6ms
 				//1hour reached
 				timer_1h=0;
 			}
-			
-
 			timer_1h++;
 		}
 	}
-	
 }
 
+//high voltage PWM interrupt 
 ISR(TIMER1_COMPA_vect){	
 	high_voltage_duty_change=1;
 	//high_voltage_duty();
@@ -449,27 +433,19 @@ ISR(TIMER1_COMPA_vect){
 
 // external interrupts, falling edges on either
 // we have a top limit of 2^32-1 pulses.
-
 ISR (INT0_vect) {
 	geiger_pulse1++;
 	geiger_pulses1++;
-	
-		led=1;
-
+	led=1;
 }
-
 ISR (INT1_vect) {
 	geiger_pulse2++;
 	geiger_pulses2++;
-	
-		led=1;
-
-
+	led=1;
 }
 
 //5v applied to charging port
-ISR (	PCINT2_vect){
-	
+ISR (PCINT2_vect){
 	if(VOLTAGE_APPLIED_PIN){
 		v_inputted=1;
 	}

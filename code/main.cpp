@@ -39,7 +39,6 @@ double battery_voltage_lvl_calc=0.02576; //(124/24)*(5v/1024)=
 //sbm-20 recommended running voltage
 double target_voltage=400.0;  //~400v calculated output from resistors
 
-#define LIPO_ARRAY_LENGTH 8
 
 /************************************************************************************************************************************************/
 /* Global Objects                                                       																		*/
@@ -150,9 +149,14 @@ void u8g_setup(void)
 	// RST: PB0,  --> PN(1,0)
 	// Arguments for u8g_InitHWSPI are: CS, A0, Reset
 	
-	//u8g_InitHWSPI(&u8g, &u8g_dev_ssd1306_128x64_hw_spi, U8G_PIN_NONE,PN(3,6), PN(1,0));
+	//u8g_InitHWSPI(&u8g, &u8g_dev_ssd1306_128x64_hw_spi, U8G_PIN_NONE,PN(3,7), PN(1,0));
+	
+	//these work
 	u8g_InitHWSPI(&u8g, &u8g_dev_sh1106_128x64_hw_spi,U8G_PIN_NONE,PN(3,7), PN(1,0));
 	u8g_SetRot180(&u8g); //flip screen, if required
+	
+	//u8g_InitHWSPI(&u8g, &u8g_dev_ssd1309_128x64_hw_spi, U8G_PIN_NONE,PN(3,7), U8G_PIN_NONE);
+	//u8g_SetRot180(&u8g); //flip screen, if required
 	//u8g_SetColorIndex(&u8g, 1);
 	
 }
@@ -160,7 +164,7 @@ void system_setup() {
 	
 	//pb0=rst disp, pb1 pwm, pb3 mosi, pb5 sck
 	DDRB = (1<<PORTB0)|(1<<PORTB1)|(1<<PORTB3)|(1<<PORTB5);
-	PORTB =0x00;
+	PORTB =0x01;
 	//pc0 feedback
 	DDRC =0x00;
 	PORTC =0x00;
@@ -226,7 +230,7 @@ int main(void)
 	delay_ms(200);
 	system_setup();
 	u8g_setup();
-	delay_ms(200);
+	//delay_ms(200);
 	LCD_clear();
 	delay_ms(200);
 	
@@ -412,7 +416,7 @@ ISR(TIMER2_COMPA_vect) { //interrupts every 1.6ms
 			{
 				timer_minutes=0; //zero if
 				timer_hours++;
-				if(timer_hours > 98) // no more than 2 digits for hours in display
+				if(timer_hours > 998) // no more than 2 digits for hours in display
 				{
 					timer_hours=0; //zero the timer
 				}
@@ -448,9 +452,12 @@ ISR (INT1_vect) {
 ISR (PCINT2_vect){
 	if(VOLTAGE_APPLIED_PIN){
 		v_inputted=1;
+		battery_voltage_check_first_time=0;
 	}
 	else{
 		v_inputted=0;
+		battery_voltage_check_first_time=1;
+		testing=0;
 	}	
 }
 /*

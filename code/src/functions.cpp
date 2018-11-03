@@ -47,7 +47,7 @@ void high_voltage_duty(){
 		
 		//PID
 		err_old=err;
-		err=right_voltage-HV_vol;
+		err=target_voltage-HV_vol;
 		P_err=err; //Proportional is directly the difference times P_val (bang bang value)
 		
 		mean_I_err[I_memory-1]=(int32_t)err;
@@ -244,87 +244,89 @@ void LCD_clear(void)
 	
 }
 
+#define battery_x_offset 7
+
 void battery_full_marking(void)
 {
 	u8g_SetFont(&u8g, u8g_font_7x13);
-	u8g_DrawBox(&u8g,66,7,2,3);
-	u8g_DrawBox(&u8g,68,5,11,7);      
+	u8g_DrawBox(&u8g,66+battery_x_offset,7,2,3);
+	u8g_DrawBox(&u8g,68+battery_x_offset,5,11,7);      
 }
 
 void battery_80_90_marking(void)
 {
 	u8g_SetFont(&u8g, u8g_font_7x13);
-	u8g_DrawBox(&u8g,66,7,2,3);
-	u8g_DrawFrame(&u8g,68,5,11,7);      
-	u8g_DrawBox(&u8g,70,5,8,7);
+	u8g_DrawBox(&u8g,66+battery_x_offset,7,2,3);
+	u8g_DrawFrame(&u8g,68+battery_x_offset,5,11,7);      
+	u8g_DrawBox(&u8g,70+battery_x_offset,5,8,7);
 }
 void battery_70_80_marking(void)
 {
 	u8g_SetFont(&u8g, u8g_font_7x13);
-	u8g_DrawBox(&u8g,66,7,2,3);
-	u8g_DrawFrame(&u8g,68,5,11,7);      
-	u8g_DrawBox(&u8g,71,5,7,7);
+	u8g_DrawBox(&u8g,66+battery_x_offset,7,2,3);
+	u8g_DrawFrame(&u8g,68+battery_x_offset,5,11,7);      
+	u8g_DrawBox(&u8g,71+battery_x_offset,5,7,7);
 }
 void battery_60_70_marking(void)
 {
 	u8g_SetFont(&u8g, u8g_font_7x13);
-	u8g_DrawBox(&u8g,66,7,2,3);
-	u8g_DrawFrame(&u8g,68,5,11,7);      
-	u8g_DrawBox(&u8g,72,5,6,7);
+	u8g_DrawBox(&u8g,66+battery_x_offset,7,2,3);
+	u8g_DrawFrame(&u8g,68+battery_x_offset,5,11,7);      
+	u8g_DrawBox(&u8g,72+battery_x_offset,5,6,7);
 }
 
 void battery_50_60_marking(void)
 {
 	u8g_SetFont(&u8g, u8g_font_7x13);
-	u8g_DrawBox(&u8g,66,7,2,3);
-	u8g_DrawFrame(&u8g,68,5,11,7);      
-	u8g_DrawBox(&u8g,73,5,5,7);
+	u8g_DrawBox(&u8g,66+battery_x_offset,7,2,3);
+	u8g_DrawFrame(&u8g,68+battery_x_offset,5,11,7);      
+	u8g_DrawBox(&u8g,73+battery_x_offset,5,5,7);
 }
 
 void battery_40_50_marking(void)
 {
 	u8g_SetFont(&u8g, u8g_font_7x13);
-	u8g_DrawBox(&u8g,66,7,2,3);
-	u8g_DrawFrame(&u8g,68,5,11,7);      
-	u8g_DrawBox(&u8g,74,5,4,7);
+	u8g_DrawBox(&u8g,66+battery_x_offset,7,2,3);
+	u8g_DrawFrame(&u8g,68+battery_x_offset,5,11,7);      
+	u8g_DrawBox(&u8g,74+battery_x_offset,5,4,7);
 }
 
 void battery_30_40_marking(void)
 {
 	u8g_SetFont(&u8g, u8g_font_7x13);
-	u8g_DrawBox(&u8g,66,7,2,3);
-	u8g_DrawFrame(&u8g,68,5,11,7);      
-	u8g_DrawBox(&u8g,75,5,3,7);
+	u8g_DrawBox(&u8g,66+battery_x_offset,7,2,3);
+	u8g_DrawFrame(&u8g,68+battery_x_offset,5,11,7);      
+	u8g_DrawBox(&u8g,75+battery_x_offset,5,3,7);
 }
 
 void battery_20_30_marking(void)
 {
 	u8g_SetFont(&u8g, u8g_font_7x13);
-	u8g_DrawBox(&u8g,66,7,2,3);
-	u8g_DrawFrame(&u8g,68,5,11,7);      
-	u8g_DrawBox(&u8g,76,5,2,7);
+	u8g_DrawBox(&u8g,66+battery_x_offset,7,2,3);
+	u8g_DrawFrame(&u8g,68+battery_x_offset,5,11,7);      
+	u8g_DrawBox(&u8g,76+battery_x_offset,5,2,7);
 }
 void battery_10_20_marking(void)
 {
 	u8g_SetFont(&u8g, u8g_font_7x13);
-	u8g_DrawBox(&u8g,66,7,2,3);
-	u8g_DrawFrame(&u8g,68,5,11,7);      
-	u8g_DrawBox(&u8g,77,5,1,7);
+	u8g_DrawBox(&u8g,66+battery_x_offset,7,2,3);
+	u8g_DrawFrame(&u8g,68+battery_x_offset,5,11,7);      
+	u8g_DrawBox(&u8g,77+battery_x_offset,5,1,7);
 }
 
 void battery_low_marking(void)
 {
 	u8g_SetFont(&u8g, u8g_font_7x13);
-	u8g_DrawBox(&u8g,66,7,2,3);
-	u8g_DrawFrame(&u8g,68,5,11,7);      
+	u8g_DrawBox(&u8g,66+battery_x_offset,7,2,3);
+	u8g_DrawFrame(&u8g,68+battery_x_offset,5,11,7);      
 }
 
 void battery_half_marking(void)
 {
 	u8g_SetFont(&u8g, u8g_font_7x13);	
-	u8g_DrawBox(&u8g,66,7,2,3);
-	u8g_DrawFrame(&u8g,68,5,11,7);
-	u8g_DrawBox(&u8g,75,5,5,7);
+	u8g_DrawBox(&u8g,66+battery_x_offset,7,2,3);
+	u8g_DrawFrame(&u8g,68+battery_x_offset,5,11,7);
+	u8g_DrawBox(&u8g,75+battery_x_offset,5,5,7);
 }
 
 #define move_by_x 1
@@ -332,38 +334,40 @@ void battery_half_marking(void)
 void battery_charging_marking(void)
 {
 	u8g_SetFont(&u8g, u8g_font_7x13);	
-	u8g_DrawLine(&u8g,68,5,73,5);
-	u8g_DrawLine(&u8g,76,5,80,5);	
-	u8g_DrawLine(&u8g,68,6,72,6);
-	u8g_DrawLine(&u8g,75,6,80,6);	
-	u8g_DrawLine(&u8g,66,7,71,7);
-	u8g_DrawLine(&u8g,74,7,80,7);	
-	u8g_DrawLine(&u8g,66,8,70,8);
-	u8g_DrawLine(&u8g,74,8,80,8);
-	u8g_DrawLine(&u8g,66,9,73,9);
-	u8g_DrawLine(&u8g,76,9,80,9);
-	u8g_DrawLine(&u8g,68,10,72,10);
-	u8g_DrawLine(&u8g,75,10,80,10);
-	u8g_DrawLine(&u8g,68,11,71,11);
-	u8g_DrawLine(&u8g,74,11,80,11);
+	u8g_DrawLine(&u8g,68+battery_x_offset,5,73+battery_x_offset,5);
+	u8g_DrawLine(&u8g,76+battery_x_offset,5,80+battery_x_offset,5);	
+	u8g_DrawLine(&u8g,68+battery_x_offset,6,72+battery_x_offset,6);
+	u8g_DrawLine(&u8g,75+battery_x_offset,6,80+battery_x_offset,6);	
+	u8g_DrawLine(&u8g,66+battery_x_offset,7,71+battery_x_offset,7);
+	u8g_DrawLine(&u8g,74+battery_x_offset,7,80+battery_x_offset,7);	
+	u8g_DrawLine(&u8g,66+battery_x_offset,8,70+battery_x_offset,8);
+	u8g_DrawLine(&u8g,74+battery_x_offset,8,80+battery_x_offset,8);
+	u8g_DrawLine(&u8g,66+battery_x_offset,9,73+battery_x_offset,9);
+	u8g_DrawLine(&u8g,76+battery_x_offset,9,80+battery_x_offset,9);
+	u8g_DrawLine(&u8g,68+battery_x_offset,10,72+battery_x_offset,10);
+	u8g_DrawLine(&u8g,75+battery_x_offset,10,80+battery_x_offset,10);
+	u8g_DrawLine(&u8g,68+battery_x_offset,11,71+battery_x_offset,11);
+	u8g_DrawLine(&u8g,74+battery_x_offset,11,80+battery_x_offset,11);
 }
 
 void battery_charging_marking2(void)
 {
-	u8g_DrawLine(&u8g,68,5,72,5);
-	u8g_DrawLine(&u8g,74,5,78,5);
-	u8g_DrawLine(&u8g,68,6,72,6);
-	u8g_DrawLine(&u8g,74,6,78,6);
-	u8g_DrawLine(&u8g,66,7,73,7);
-	u8g_DrawLine(&u8g,76,7,78,7);
-	u8g_DrawLine(&u8g,66,8,68,8);
-	u8g_DrawLine(&u8g,77,8,78,8);
-	u8g_DrawLine(&u8g,66,9,69,9);
-	u8g_DrawLine(&u8g,72,9,78,9);
-	u8g_DrawLine(&u8g,68,10,70,10);
-	u8g_DrawLine(&u8g,73,10,78,10);
-	u8g_DrawLine(&u8g,68,11,71,11);
-	u8g_DrawLine(&u8g,73,11,78,11);
+	u8g_DrawLine(&u8g,68+battery_x_offset,5,72+battery_x_offset,5);
+	u8g_DrawLine(&u8g,74+battery_x_offset,5,78+battery_x_offset,5);
+	u8g_DrawLine(&u8g,68+battery_x_offset,6,72+battery_x_offset,6);
+	
+	u8g_DrawLine(&u8g,75+battery_x_offset,6,78+battery_x_offset,6);
+	
+	u8g_DrawLine(&u8g,66+battery_x_offset,7,73+battery_x_offset,7);
+	u8g_DrawLine(&u8g,76+battery_x_offset,7,78+battery_x_offset,7);
+	u8g_DrawLine(&u8g,66+battery_x_offset,8,68+battery_x_offset,8);
+	u8g_DrawLine(&u8g,77+battery_x_offset,8,78+battery_x_offset,8);
+	u8g_DrawLine(&u8g,66+battery_x_offset,9,69+battery_x_offset,9);
+	u8g_DrawLine(&u8g,72+battery_x_offset,9,78+battery_x_offset,9);
+	u8g_DrawLine(&u8g,68+battery_x_offset,10,70+battery_x_offset,10);
+	u8g_DrawLine(&u8g,73+battery_x_offset,10,78+battery_x_offset,10);
+	u8g_DrawLine(&u8g,68+battery_x_offset,11,71+battery_x_offset,11);
+	u8g_DrawLine(&u8g,73+battery_x_offset,11,78+battery_x_offset,11);
 }
 //descending both values
 double dsp_lookup(double (*table)[2], double x, int16_t array_size){
@@ -438,6 +442,8 @@ void draw_battery(void)
 		battery_low_marking();
 	}
 	
+	//if voltage is inputted to charger don't show current charge state 
+	if(!v_inputted){
 	ftoa(bat_percent,string_bat_percent,0);
 	if(bat_percent > 99){
 		u8g_DrawStr(&u8g, 96,13, string_bat_percent);
@@ -448,9 +454,8 @@ void draw_battery(void)
 	else if(bat_percent <= 9){
 		u8g_DrawStr(&u8g, 110,13, string_bat_percent);
 	}
-	
 	u8g_DrawStr(&u8g, 120,13, "%");
-	
+	}
 	//ftoa(battery_voltage_lvl,string_bat_percent,2);
 	//u8g_DrawStr(&u8g, 2,26, string_bat_percent);
 	
@@ -492,7 +497,7 @@ void check_input_voltage(){
 
 
 
-
+#define time_x_offset 7
 
 void display_draw(){
 		ftoad(usv, usvs, 2);
@@ -514,7 +519,7 @@ void display_draw(){
 		ftoa(bat, battery, 2); //convert float to string
 		intToStr(timer_seconds, secs, 2); //seconds
 		intToStr(timer_minutes, mins, 2); //mins
-		intToStr(timer_hours, hours, 2); //hours
+		intToStr(timer_hours, hours, 3); //hours
 		ftoa(HV_vol, HV, 0);
 		
 		//printing to display
@@ -523,10 +528,10 @@ void display_draw(){
 		{
 			u8g_SetFont(&u8g, u8g_font_7x13);
 			u8g_DrawStr(&u8g, 0, 13, hours);
-			u8g_DrawStr(&u8g, 14, 13, ":");
-			u8g_DrawStr(&u8g, 21, 13, mins);
-			u8g_DrawStr(&u8g, 35, 13, ":");
-			u8g_DrawStr(&u8g, 42,13, secs);
+			u8g_DrawStr(&u8g, 14+time_x_offset, 13, ":");
+			u8g_DrawStr(&u8g, 21+time_x_offset, 13, mins);
+			u8g_DrawStr(&u8g, 35+time_x_offset, 13, ":");
+			u8g_DrawStr(&u8g, 42+time_x_offset,13, secs);
 			
 			if(!battery_voltage_check_first_time){
 				draw_battery();
